@@ -45,5 +45,6 @@ class TestAuthBlueprint(BaseTestCase):
         self.assertTrue(data['message'] == 'User already exists! Please log in.')
         self.assertTrue(response.content_type == 'application/json')
         self.assertEqual(response.status_code, 202)
+
 if __name__ == '__main__':
     unittest.main()
