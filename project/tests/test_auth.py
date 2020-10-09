@@ -69,8 +69,8 @@ class TestAuthBlueprint(BaseTestCase):
         self.assertTrue(data['status'] == 'success')
         self.assertTrue(data['message'] == 'Successfully logged in.')
         self.assertTrue(data['auth_token'])
-        self.assertTrue(response.content_type == 'application/json')
-        self.assertEqual(response.status_code, 200)
+        self.assertTrue(user_login_response.content_type == 'application/json')
+        self.assertEqual(user_login_response.status_code, 200)
 
     def test_unregistered_user_login_fails(self):
         """
@@ -79,10 +79,8 @@ class TestAuthBlueprint(BaseTestCase):
         user_login_response = self.login_user('user1@test.com', '123456')
         data = json.loads(user_login_response.data.decode())
         self.assertTrue(data['status'] == 'fail')
-        self.assertTrue(data['message'] == 'Successfully logged in.')
-        self.assertTrue(data['auth_token'])
-        self.assertTrue(response.content_type == 'application/json')
-        self.assertEqual(response.status_code, 401)
+        self.assertTrue(data['message'] == 'User does not exist. Please register.')
+        self.assertEqual(user_login_response.status_code, 404)
 
 if __name__ == '__main__':
     unittest.main()
