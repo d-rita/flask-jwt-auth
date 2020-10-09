@@ -1,6 +1,6 @@
 # Flask JWT Auth
 
-[![Build Status](https://travis-ci.org/d-rita/flask-jwt-auth.svg?branch=main)](https://travis-ci.org/d-rita/flask-jwt-auth)
+[![Build Status](https://travis-ci.org/d-rita/flask-jwt-auth.svg?branch=user-jwt-auth)](https://travis-ci.org/d-rita/flask-jwt-auth)
 
 ## Quick Start
 
