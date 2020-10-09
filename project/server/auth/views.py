@@ -58,14 +58,22 @@ class LoginAPI(MethodView):
                 email=login_data.get('email')
             ).first()
             if user:
-                auth_token = user.encode_auth_token(user.id)
-                if auth_token:
+                if bcrypt.check_password_hash(
+                    user.password, login_data.get('password')):
+                    auth_token = user.encode_auth_token(user.id)
+                    if auth_token:
+                        responseObject = {
+                            'status': 'success',
+                            'message': 'Successfully logged in.',
+                            'auth_token': auth_token.decode()
+                        }
+                        return make_response(jsonify(responseObject)), 200
+                else:
                     responseObject = {
-                        'status': 'success',
-                        'message': 'Successfully logged in.',
-                        'auth_token': auth_token.decode()
+                    'status': 'fail',
+                    'message': 'Wrong password. Please try again.'
                     }
-                    return make_response(jsonify(responseObject)), 200
+                return make_response(jsonify(responseObject)), 404
             else:
                 responseObject = {
                 'status': 'fail',
@@ -77,9 +85,9 @@ class LoginAPI(MethodView):
             print(e)
             responseObject = {
                 'status': 'fail',
-                'message': 'Try again'
+                'message': 'Try again.'
             }
-            return make_response(jsonify(responseObject)), 401
+            return make_response(jsonify(responseObject)), 500
 
 registration_view = RegisterAPI.as_view('register_api')
 login_view = LoginAPI.as_view('login_api')

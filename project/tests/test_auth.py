@@ -72,6 +72,17 @@ class TestAuthBlueprint(BaseTestCase):
         self.assertTrue(user_login_response.content_type == 'application/json')
         self.assertEqual(user_login_response.status_code, 200)
 
+    def test_registered_user_wrong_password_fails(self):
+        """
+        Test failed login with correct email and wrong password
+        """
+        user_register = self.register_user('user1@test.com', '123456')
+        user_login_response = self.login_user('user1@test.com', 'abcdef')
+        data = json.loads(user_login_response.data.decode())
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(data['message'] == 'Wrong password. Please try again.')
+        self.assertEqual(user_login_response.status_code, 404)
+
     def test_unregistered_user_login_fails(self):
         """
         Test failed login of unregistered user
@@ -81,6 +92,25 @@ class TestAuthBlueprint(BaseTestCase):
         self.assertTrue(data['status'] == 'fail')
         self.assertTrue(data['message'] == 'User does not exist. Please register.')
         self.assertEqual(user_login_response.status_code, 404)
+
+    def test_submit_non_json_data_fails(self):
+        """
+        Test failed login with content submitted in text format instead of JSON format
+        """
+        with self.client:
+            user_login_response = self.client.post(
+                '/auth/login',
+                data=json.dumps(dict(
+                    email='user1@test.com',
+                    password='123456'
+                )),
+                content_type='text'
+            )
+            data = json.loads(user_login_response.data.decode())
+            self.assertTrue(data['status'] == 'fail')
+            self.assertTrue(data['message'] == 'Try again.')
+            self.assertEqual(user_login_response.status_code, 500)
+    
 
 if __name__ == '__main__':
     unittest.main()
